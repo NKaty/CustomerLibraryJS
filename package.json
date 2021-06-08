@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Customer library",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint:check": "eslint src/. --ext .js,.ts --max-warnings=0; exit 0",
     "lint:fix": "eslint --fix --max-warnings=0",
     "prettier": "prettier --write"
@@ -13,6 +14,9 @@
   "author": "NKaty",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/node": "^7.14.2",
+    "@babel/preset-env": "^7.14.4",
     "eslint": "^7.28.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
@@ -20,6 +24,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^4.3.8",
+    "jest": "^27.0.4",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1"
   },
@@ -35,16 +40,35 @@
         2,
         "always"
       ],
+      "import/extensions": "off",
       "prettier/prettier": [
         "error"
       ]
     },
     "env": {
       "es6": true,
-      "node": true
+      "node": true,
+      "jest": true
     },
     "plugins": [
       "prettier"
+    ]
+  },
+  "jest": {
+    "collectCoverage": true,
+    "moduleFileExtensions": [
+      "js",
+      "mjs"
+    ],
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.mjs$": "babel-jest"
+    },
+    "testRegex": "((\\.|/*.)(spec|tests))\\.js?$"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
     ]
   },
   "prettier": {
