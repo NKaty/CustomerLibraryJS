@@ -55,7 +55,9 @@ class BaseValidator {
         )
         .flat();
     } else {
-      errors = this.complexRuleValidationMap[field](value);
+      errors = this.complexRuleValidationMap[field](value).map(
+        (error) => `${field}: ${error}`
+      );
     }
 
     return errors.length ? [field, errors] : [];

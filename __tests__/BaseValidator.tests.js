@@ -235,6 +235,11 @@ describe('BaseValidator.errorMessages', () => {
 });
 
 describe('BaseValidator.getObjectToValidate', () => {
+  afterEach(() => {
+    BaseValidator.simpleRuleValidationMap = {};
+    BaseValidator.complexRuleValidationMap = {};
+  });
+
   test('it should return combined object', () => {
     const objectToValidate = {
       field1: 1,
@@ -248,7 +253,7 @@ describe('BaseValidator.getObjectToValidate', () => {
     };
 
     BaseValidator.complexRuleValidationMap = {
-      field3: () => true,
+      field3: () => [],
     };
 
     expect(BaseValidator.getObjectToValidate(objectToValidate)).toStrictEqual({
@@ -262,6 +267,11 @@ describe('BaseValidator.getObjectToValidate', () => {
 });
 
 describe('BaseValidator.validateSimpleRule', () => {
+  afterEach(() => {
+    BaseValidator.simpleRuleValidationMap = {};
+    BaseValidator.complexRuleValidationMap = {};
+  });
+
   test('it should return empty array if field is valid', () => {
     BaseValidator.simpleRuleValidationMap = {
       fieldName: [['required']],
@@ -303,6 +313,13 @@ describe('BaseValidator.validateComplexRule', () => {
   class FirstValidator extends BaseValidator {}
 
   class SecondValidator extends BaseValidator {}
+
+  afterEach(() => {
+    FirstValidator.simpleRuleValidationMap = {};
+    FirstValidator.complexRuleValidationMap = {};
+    SecondValidator.simpleRuleValidationMap = {};
+    SecondValidator.complexRuleValidationMap = {};
+  });
 
   test('it should return empty array if field is valid', () => {
     FirstValidator.simpleRuleValidationMap = {
@@ -376,6 +393,13 @@ describe('BaseValidator.validate', () => {
   class FirstValidator extends BaseValidator {}
 
   class SecondValidator extends BaseValidator {}
+
+  afterEach(() => {
+    FirstValidator.simpleRuleValidationMap = {};
+    FirstValidator.complexRuleValidationMap = {};
+    SecondValidator.simpleRuleValidationMap = {};
+    SecondValidator.complexRuleValidationMap = {};
+  });
 
   test('it should return empty array if object is valid', () => {
     FirstValidator.simpleRuleValidationMap = {
