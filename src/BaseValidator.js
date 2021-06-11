@@ -69,12 +69,22 @@ class BaseValidator {
     }
 
     const rules = this.simpleRuleValidationMap[field];
+    let trimValue = value;
+
+    if (typeof value === 'string') {
+      trimValue = value.trim();
+    }
 
     for (let i = 0; i < rules.length; i += 1) {
       const [rule, ...args] = rules[i];
-      const result = this.validationRules[rule](value, ...args);
-      if (!result) {
-        return [rule, this.errorMessages[rule](field, ...args)];
+
+      if (this.validationRules[rule]) {
+        const result = this.validationRules[rule](trimValue, ...args);
+        if (!result) {
+          return [rule, this.errorMessages[rule](field, ...args)];
+        }
+      } else {
+        throw new TypeError('Unknown rule.');
       }
     }
 

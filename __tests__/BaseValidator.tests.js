@@ -307,6 +307,16 @@ describe('BaseValidator.validateSimpleRule', () => {
       BaseValidator.validateSimpleField('anotherField', undefined).length
     ).toBe(0);
   });
+
+  test('it should throw TypeError if rule name is invalid', () => {
+    BaseValidator.simpleRuleValidationMap = {
+      fieldName: [['require']],
+    };
+
+    expect(() =>
+      BaseValidator.validateSimpleField('fieldName', 'value')
+    ).toThrow('Unknown rule');
+  });
 });
 
 describe('BaseValidator.validateComplexRule', () => {
