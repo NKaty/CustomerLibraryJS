@@ -393,9 +393,9 @@ describe('BaseValidator.validateComplexRule', () => {
       firstField: (value) => FirstValidator.validate(value),
     };
 
-    expect(BaseValidator.validateComplexField('anotherField', {}).length).toBe(
-      0
-    );
+    expect(
+      SecondValidator.validateComplexField('anotherField', {}).length
+    ).toBe(0);
   });
 });
 
