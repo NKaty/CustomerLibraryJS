@@ -1,5 +1,10 @@
 class BaseValidator {
-  static validate(obj) {
+  constructor() {
+    this.simpleRuleValidationMap = {};
+    this.complexRuleValidationMap = {};
+  }
+
+  validate(obj) {
     return Object.entries(this.getObjectToValidate(obj)).reduce(
       (acc, entries) => {
         const [field, value] = entries;
@@ -25,7 +30,7 @@ class BaseValidator {
     );
   }
 
-  static getObjectToValidate(obj) {
+  getObjectToValidate(obj) {
     const objToValidate = {};
 
     Object.keys(this.simpleRuleValidationMap).forEach((item) => {
@@ -39,7 +44,7 @@ class BaseValidator {
     return Object.assign(objToValidate, obj);
   }
 
-  static validateComplexField(field, value) {
+  validateComplexField(field, value) {
     if (!(field in this.complexRuleValidationMap)) {
       return [];
     }
@@ -63,7 +68,7 @@ class BaseValidator {
     return errors.length ? [field, errors] : [];
   }
 
-  static validateSimpleField(field, value) {
+  validateSimpleField(field, value) {
     if (!(field in this.simpleRuleValidationMap)) {
       return [];
     }
@@ -78,10 +83,10 @@ class BaseValidator {
     for (let i = 0; i < rules.length; i += 1) {
       const [rule, ...args] = rules[i];
 
-      if (this.validationRules[rule]) {
-        const result = this.validationRules[rule](trimValue, ...args);
+      if (BaseValidator.validationRules[rule]) {
+        const result = BaseValidator.validationRules[rule](trimValue, ...args);
         if (!result) {
-          return [rule, this.errorMessages[rule](field, ...args)];
+          return [rule, BaseValidator.errorMessages[rule](field, ...args)];
         }
       } else {
         throw new TypeError('Unknown rule.');
@@ -148,9 +153,5 @@ BaseValidator.errorMessages = {
   phone: (field) => `${field}: The phone number is invalid.`,
   minDate: (field, minDate) => `${field}: The date must be after ${minDate}.`,
 };
-
-BaseValidator.simpleRuleValidationMap = {};
-
-BaseValidator.complexRuleValidationMap = {};
 
 export default BaseValidator;

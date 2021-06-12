@@ -235,9 +235,10 @@ describe('BaseValidator.errorMessages', () => {
 });
 
 describe('BaseValidator.getObjectToValidate', () => {
-  afterEach(() => {
-    BaseValidator.simpleRuleValidationMap = {};
-    BaseValidator.complexRuleValidationMap = {};
+  let validator;
+
+  beforeEach(() => {
+    validator = new BaseValidator();
   });
 
   test('it should return combined object', () => {
@@ -247,16 +248,16 @@ describe('BaseValidator.getObjectToValidate', () => {
       field5: 5,
     };
 
-    BaseValidator.simpleRuleValidationMap = {
+    validator.simpleRuleValidationMap = {
       field1: [['required']],
       field2: [['required']],
     };
 
-    BaseValidator.complexRuleValidationMap = {
+    validator.complexRuleValidationMap = {
       field3: () => [],
     };
 
-    expect(BaseValidator.getObjectToValidate(objectToValidate)).toStrictEqual({
+    expect(validator.getObjectToValidate(objectToValidate)).toStrictEqual({
       field1: 1,
       field2: undefined,
       field3: undefined,
@@ -267,55 +268,50 @@ describe('BaseValidator.getObjectToValidate', () => {
 });
 
 describe('BaseValidator.validateSimpleRule', () => {
-  afterEach(() => {
-    BaseValidator.simpleRuleValidationMap = {};
-    BaseValidator.complexRuleValidationMap = {};
+  let validator;
+
+  beforeEach(() => {
+    validator = new BaseValidator();
   });
 
   test('it should return empty array if field is valid', () => {
-    BaseValidator.simpleRuleValidationMap = {
+    validator.simpleRuleValidationMap = {
       fieldName: [['required']],
     };
 
-    expect(BaseValidator.validateSimpleField('fieldName', 'value').length).toBe(
-      0
-    );
+    expect(validator.validateSimpleField('fieldName', 'value').length).toBe(0);
   });
 
   test('it should return empty array if field is not in validation rules', () => {
-    expect(BaseValidator.validateSimpleField('fieldName', 'value').length).toBe(
-      0
-    );
+    expect(validator.validateSimpleField('fieldName', 'value').length).toBe(0);
   });
 
   test('it should return error message if field is invalid', () => {
-    BaseValidator.simpleRuleValidationMap = {
+    validator.simpleRuleValidationMap = {
       fieldName: [['required']],
     };
 
-    expect(
-      BaseValidator.validateSimpleField('fieldName', '').length
-    ).toBeTruthy();
+    expect(validator.validateSimpleField('fieldName', '').length).toBeTruthy();
   });
 
   test('it should return empty array if field is not in validation map', () => {
-    BaseValidator.simpleRuleValidationMap = {
+    validator.simpleRuleValidationMap = {
       fieldName: [['required']],
     };
 
     expect(
-      BaseValidator.validateSimpleField('anotherField', undefined).length
+      validator.validateSimpleField('anotherField', undefined).length
     ).toBe(0);
   });
 
   test('it should throw TypeError if rule name is invalid', () => {
-    BaseValidator.simpleRuleValidationMap = {
+    validator.simpleRuleValidationMap = {
       fieldName: [['require']],
     };
 
-    expect(() =>
-      BaseValidator.validateSimpleField('fieldName', 'value')
-    ).toThrow('Unknown rule');
+    expect(() => validator.validateSimpleField('fieldName', 'value')).toThrow(
+      'Unknown rule'
+    );
   });
 });
 
@@ -324,24 +320,25 @@ describe('BaseValidator.validateComplexRule', () => {
 
   class SecondValidator extends BaseValidator {}
 
-  afterEach(() => {
-    FirstValidator.simpleRuleValidationMap = {};
-    FirstValidator.complexRuleValidationMap = {};
-    SecondValidator.simpleRuleValidationMap = {};
-    SecondValidator.complexRuleValidationMap = {};
+  let firstValidator;
+  let secondValidator;
+
+  beforeEach(() => {
+    firstValidator = new FirstValidator();
+    secondValidator = new SecondValidator();
   });
 
   test('it should return empty array if field is valid', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
     expect(
-      SecondValidator.validateComplexField('firstField', {
+      secondValidator.validateComplexField('firstField', {
         firstName: 'first name',
         lastName: 'last name',
       }).length
@@ -349,15 +346,15 @@ describe('BaseValidator.validateComplexRule', () => {
   });
 
   test('it should return errors for object if field is invalid', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
-    const [field, errors] = SecondValidator.validateComplexField(
+    const [field, errors] = secondValidator.validateComplexField(
       'firstField',
       {}
     );
@@ -367,15 +364,15 @@ describe('BaseValidator.validateComplexRule', () => {
   });
 
   test('it should return errors for array of objects if field is invalid', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
-    const [field, errors] = SecondValidator.validateComplexField('firstField', [
+    const [field, errors] = secondValidator.validateComplexField('firstField', [
       {},
       {},
     ]);
@@ -385,17 +382,17 @@ describe('BaseValidator.validateComplexRule', () => {
   });
 
   test('it should return empty array if field is not in validation map', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
-    expect(BaseValidator.validateComplexField('anotherField', {}).length).toBe(
-      0
-    );
+    expect(
+      secondValidator.validateComplexField('anotherField', {}).length
+    ).toBe(0);
   });
 });
 
@@ -404,28 +401,29 @@ describe('BaseValidator.validate', () => {
 
   class SecondValidator extends BaseValidator {}
 
-  afterEach(() => {
-    FirstValidator.simpleRuleValidationMap = {};
-    FirstValidator.complexRuleValidationMap = {};
-    SecondValidator.simpleRuleValidationMap = {};
-    SecondValidator.complexRuleValidationMap = {};
+  let firstValidator;
+  let secondValidator;
+
+  beforeEach(() => {
+    firstValidator = new FirstValidator();
+    secondValidator = new SecondValidator();
   });
 
   test('it should return empty array if object is valid', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.simpleRuleValidationMap = {
+    secondValidator.simpleRuleValidationMap = {
       email: [['required'], ['email']],
       country: [['required'], ['string'], ['maxLength', 10]],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
     expect(
-      SecondValidator.validate({
+      secondValidator.validate({
         email: 'bob@gmail.com',
         country: 'France',
         firstField: {
@@ -437,18 +435,18 @@ describe('BaseValidator.validate', () => {
   });
 
   test('it should return array errors if object is invalid', () => {
-    FirstValidator.simpleRuleValidationMap = {
+    firstValidator.simpleRuleValidationMap = {
       firstName: [['required']],
       lastName: [['required']],
     };
-    SecondValidator.simpleRuleValidationMap = {
+    secondValidator.simpleRuleValidationMap = {
       email: [['required'], ['email']],
       country: [['required'], ['maxLength', 10]],
     };
-    SecondValidator.complexRuleValidationMap = {
-      firstField: (value) => FirstValidator.validate(value),
+    secondValidator.complexRuleValidationMap = {
+      firstField: (value) => firstValidator.validate(value),
     };
 
-    expect(SecondValidator.validate({}).length).toBe(4);
+    expect(secondValidator.validate({}).length).toBe(4);
   });
 });
