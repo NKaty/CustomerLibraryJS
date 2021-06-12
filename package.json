@@ -2,13 +2,17 @@
   "name": "customer_library",
   "version": "1.0.0",
   "description": "Customer library",
-  "main": "src/index.js",
+  "main": "src/BaseValidator.js",
   "type": "module",
   "scripts": {
     "test": "jest",
-    "lint:check": "eslint src/. --ext .js,.ts --max-warnings=0; exit 0",
+    "lint:check": "eslint . --ext .js,.mjs --max-warnings=0; exit 0",
     "lint:fix": "eslint --fix --max-warnings=0",
     "prettier": "prettier --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NKaty/CustomerLibraryJS"
   },
   "keywords": [],
   "author": "NKaty",
@@ -75,7 +79,7 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "src/**/*.{js,ts}": [
+    "**/*.{js,mjs}": [
       "npm run prettier",
       "npm run lint:fix"
     ]
