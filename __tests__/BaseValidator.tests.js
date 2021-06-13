@@ -234,6 +234,14 @@ describe('BaseValidator.errorMessages', () => {
   });
 });
 
+describe('BaseValidator.constructor', () => {
+  test('it should throw error in case of initialization', () => {
+    expect(() => new BaseValidator()).toThrow(
+      'You are trying to initialize a static class.'
+    );
+  });
+});
+
 describe('BaseValidator.getObjectToValidate', () => {
   afterEach(() => {
     BaseValidator.simpleRuleValidationMap = {};

@@ -1,4 +1,8 @@
 class BaseValidator {
+  constructor() {
+    throw new Error('You are trying to initialize a static class.');
+  }
+
   static validate(obj) {
     return Object.entries(this.getObjectToValidate(obj)).reduce(
       (acc, entries) => {
